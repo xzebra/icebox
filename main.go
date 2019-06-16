@@ -2,41 +2,40 @@ package main
 
 import (
 	"fmt"
-	"html/template"
+	"log"
 	"net/http"
-	"path/filepath"
-
-	foodDB "github.com/openfoodfacts/openfoodfacts-go"
+	"time"
 )
 
+const (
+	DOMAIN = "www.example.org"
+	IP = "192.168.100.17"
+	PORT = "8080"
+)
+
+func newHTTPServer() *http.Server {
+	mux := &http.ServeMux{}
+	fileServer := http.FileServer(http.Dir("public/static/"))
+	mux.Handle("/", fileServer)
+	mux.HandleFunc("/product", handleProduct)
+
+	// avoid slow clients
+	return &http.Server{
+		ReadTimeout: 5*time.Second,
+		WriteTimeout: 5*time.Second,
+		IdleTimeout: 120*time.Second,
+		Handler: mux,
+	}
+}
+
 func main() {
-	http.HandleFunc("/product", func(w http.ResponseWriter, r *http.Request) {
-		t, err := template.ParseFiles(filepath.Join("public", "templates", "product.html"))
-		if err != nil {
-			http.Error(w, err.Error(), 500)
-		} else {
-			api := foodDB.NewHttpApiOperator("es", "", "")
-			fmt.Printf("Requested info of product %s\n", r.URL.Query().Get("barcode"))
-			product, err := api.GetProduct(r.URL.Query().Get("barcode"))
-			if err != nil {
-				http.Error(w, "could not connect to the server", 500)
-			} else {
-				fmt.Println("INFO:", product.Id, product.GenericName)
-				err := t.Execute(w, product)
-				if err != nil {
-					http.Error(w, "could not get product info", 404)
-				}
-			}
-		}
-	})
+	// HTTPS server setup
+	httpServer := newHTTPServer()
+	httpServer.Addr = IP + ":" + PORT
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, filepath.Join("public", "static", "index.html"))
-	})
-
-	fmt.Println("Running server at port 8080")
-	err := http.ListenAndServe("192.168.100.17:8080", nil)
+	fmt.Printf("Starting HTTPS server on %s\n", httpServer.Addr)
+	err := httpServer.ListenAndServe()
 	if err != nil {
-		panic(err)
+		log.Fatalf("httpServer.ListenAndServe failed with %s", err)
 	}
 }
