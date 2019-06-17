@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"net/http"
 	"path/filepath"
+	"strings"
 
 	foodDB "github.com/openfoodfacts/openfoodfacts-go"
 )
@@ -20,7 +21,11 @@ func handleProduct(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				http.ServeFile(w, r, filepath.Join("public/static/product_not_found.html"))
 			} else {
-				fmt.Println("INFO:", product.GenericName)
+				// trim product name
+				extraTags := strings.Index(product.ProductName, " - ")
+				if extraTags != -1 {
+					product.ProductName = product.ProductName[:extraTags]
+				}
 				err := t.Execute(w, product)
 				if err != nil {
 					http.ServeFile(w, r, filepath.Join("public/static/404.html"))
