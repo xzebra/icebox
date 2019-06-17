@@ -1,8 +1,10 @@
 <html>
     <head>
         <title>{{.ProductName}}</title>
+        <link rel="stylesheet" href="/css/fonts.css" type="text/css">
         <style>
             .bubble {
+                font-family: 'Roboto', Arial, serif;
                 font-size: 2em;
                 padding: 2em;
                 position: absolute;
@@ -34,6 +36,7 @@
             }
 
             .button {
+                font-family: 'Roboto', Arial, serif;
                 background-color: #008CBA;
                 border: none;
                 color: white;
@@ -47,19 +50,60 @@
                 background-color: #009ecd;
                 box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
             }
+            
+            .background {
+                height: 100%;
+                background-image: url("/media/fridge_open.png");
+                background-repeat: no-repeat;
+                -webkit-background-size: cover;
+                background-size: cover;
+                position:relative;
+                background-position: center;
+                opacity: 0.65;
+            }
+
+            .campo {
+                margin-top: 0;
+                margin-bottom: 1em;
+            }
+            .campo > h2, h3 {
+                margin:0;
+            }
+            .campo > h2 {
+                opacity: 0.5;
+            }
+            .campo > h3 {
+                margin-top: 0.2em;
+                text-indent: 1.5em;
+            }
+
+            .title {
+                font-family: 'DacillaScript', Arial, serif;
+                text-align: center;
+                margin: 1em 3em;
+            }
         </style>
     </head>
     <body>
+        <div class="background"></div>
         <div class="bubble">
-            <div style="text-align: center; margin-bottom: 3em; margin-top: 3em;">
+            <div class="title">
                 <h1>{{.ProductName}}</h1>
             </div>
             <div class="split">
                 <img src="{{.ImageSmallURL.String}}">
             </div>
             <div class="split" style="float: right;">
-                <h2>{{index .BrandsTags 0}}</h2>
-                <h2>{{.Stores}}</h2>
+                <div class="campo">
+                    <h2>Marca</h2>
+                    <h3>{{index .BrandsTags 0}}</h3>
+                </div>
+                {{if .Stores}}
+                    <div class="campo">
+                        <h2>Supermercado</h2>
+                        <h3>{{.Stores}}</h3>
+                    </div>
+                {{end}}
             </div>
             <div style="text-align: center; margin-top: 2em;">
                 <button type="button" class="button">Apuntar en la lista</button>

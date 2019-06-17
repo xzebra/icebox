@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"path/filepath"
 	"time"
 )
 
@@ -15,8 +16,8 @@ const (
 
 func newHTTPServer() *http.Server {
 	mux := &http.ServeMux{}
-	fileServer := http.FileServer(http.Dir("public/static/"))
-	mux.Handle("/", fileServer)
+
+	mux.Handle("/", fileServerWithErrors(filepath.Join("public", "static")))
 	mux.HandleFunc("/product", handleProduct)
 
 	// avoid slow clients

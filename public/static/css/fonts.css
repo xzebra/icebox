@@ -1,0 +1,15 @@
+@font-face {
+    font-family: "DacillaScript";
+    src: url("/fonts/Dacilla Script.otf");
+}
+
+@font-face {
+    font-family: "Roboto";
+    src: url("/fonts/RobotoCondensed-Regular.ttf");
+}
+
+@font-face {
+    font-family: "Roboto";
+    src: url("/fonts/RobotoCondensed-Bold.ttf");
+    font-weight: bold;
+}
